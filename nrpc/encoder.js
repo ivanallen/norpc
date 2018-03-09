@@ -29,7 +29,7 @@ class Encoder {
      */
     _getTypeAndData(data) {
         let type = 'raw';
-        let res = data;
+        let res = null;
         if (data instanceof stream.Readable) {
             type = 'stream';
             res = data;
@@ -56,6 +56,9 @@ class Encoder {
         } else if (data instanceof Buffer) {
             type = 'raw';
             res = data;
+        } else {
+            type = 'raw';
+            res = new Buffer(data.toString()); // 默认
         }
         return [type, res];
     }
