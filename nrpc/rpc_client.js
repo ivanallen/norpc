@@ -20,6 +20,7 @@ const http = require('http');
 class RpcClient {
     constructor(options) {
         this._options = options;
+        this._options.method = 'POST';
     }
 
     request(method, ...argv) {

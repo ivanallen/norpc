@@ -12,8 +12,7 @@ const PassThrough = require('stream').PassThrough;
 const options = {
     hostname: 'localhost',
     port: 8000,
-    path: '/',
-    method: 'POST'
+    path: '/'
 };
 
 let a = 78;
