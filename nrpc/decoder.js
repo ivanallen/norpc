@@ -1,11 +1,10 @@
 /**
  * @file 文件介绍
- * @author liufeng@baidu.com
+ * @author liufeng27@baidu.com
  */
 /* eslint-disable fecs-camelcase */
 /*jshint node:true*/
 /*jshint esversion:6*/
-
 
 const _ = require('underscore');
 const stream = require('stream');
@@ -14,12 +13,24 @@ const PassThrough = stream.PassThrough;
 const MAGIC = 0xccbb0123;
 const HEAD_LENGTH = 48;
 
+/**
+ * 解码器基类，需要用户实现 _parse 函数
+ * 对于服务端来说，需要解码客户端传来的数据，返回方法名和参数列表
+ *
+ * @class
+ */
 class Decoder {
     constructor(readStream) {
         this._readStream = readStream;
         this._buffer = new Buffer([]);
     }
 
+    /**
+     * 将读流中的数据解码成函数名，参数列表。
+     *
+     * @return {Promise} - [method, argv]
+     *      argv 是数组，函数参数。
+     */
     parse() {
         return this._getJsonBody().then(jsonBody => {
             return this._parse(jsonBody);
@@ -38,16 +49,26 @@ class Decoder {
         return p;
     }
 
+    /**
+     * 异步从流中读取 n 字节。此方法要么返回 n 字节数据，要么返回 null
+     *
+     * @param {integer} n - 要读取的字节数
+     * @return {Promise} - Buffer
+     */
     _readn(n) {
         if (n === 0) {
             return Promise.resolve(new Buffer([]));
         }
         let readPromise = this._createPromise();
         this._readStream.once('end', () => {
+            // 提前结束，但是没读取到 n 字节数据。
             readPromise.reject(new Error('short data'));
         });
         this._readStream.once('abort', () => {
-            readPromise.reject(new Error('abort'));
+            readPromise.reject(new Error('request abort'));
+        });
+        this._readStream.once('error', () => {
+            readPromise.reject(new Error('request error'));
         });
         // 异步读 n 字节
         let _readn = (n) => {
@@ -80,11 +101,16 @@ class Decoder {
         return readPromise;
     }
 
+    /**
+     * 读取 48 字节协议头
+     *
+     * @return {Promise} - Object 
+     */
     _getHeader() {
         return this._readn(HEAD_LENGTH).then(chunk => {
             let header = {};
             header.magic = chunk.readUInt32LE(0);
-            if (header.magic !== 0xccbb0123) {
+            if (header.magic !== MAGIC) {
                 console.error('magic:%s', header.magic.toString(16));
                 return new Error('invalid header');
             }
@@ -94,6 +120,28 @@ class Decoder {
         });
     }
 
+    /**
+     * 读取 json 头
+     *
+     * @param {Buffer} header - 协议头
+     * @return {Promise} - Object
+     *      json 头有两种，一种是客户端请求 json 头。格式如下：
+     *           {
+     *              method: 方法名
+     *              describes: [
+     *                  {type: 参数类型, length: 参数长度}
+     *                  ...
+     *              ]
+     *           }
+     *       另一种是服务端 rpc 函数调用时返回数据的描述信息：
+     *          {
+     *              type: 数据类型,
+     *              length: 数据长度
+     *          }
+     *       type 类型主要有 string, integer, float, json, raw, stream
+     *       对于 integer, float 和 stream 来说，length 字段是不必要的。
+     *       这里的 integer 是 int32，而 float 是指 float64
+     */
     _getJsonBodyByHeader(header) {
         let readJsonBodyPromise = this._createPromise();
         return this._readn(header.jsonBodyLen).then(chunk => {
@@ -110,6 +158,13 @@ class Decoder {
         });
     }
 
+    /**
+     * 根据数据描述信息读取数据
+     *  
+     * @param {Object} describe
+     *      {string} describe.type - 数据类型
+     *      {integer} describe.length - 数据长度
+     */
     _getData(describe) {
         if (describe.type === 'string') {
             return this._readn(describe.length).then(chunk => {

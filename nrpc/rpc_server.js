@@ -1,6 +1,6 @@
 /**
  * @file 文件介绍
- * @author liufeng@baidu.com
+ * @author liufeng27@baidu.com
  */
 /* eslint-disable fecs-camelcase */
 /*jshint node:true*/
@@ -11,6 +11,11 @@ const stream = require('stream');
 const ReqDecoder = require('./req_decoder');
 const ResEncoder = require('./res_encoder');
 
+/**
+ * rpc server 端
+ *
+ * @class
+ */
 class RpcServer {
     constructor(readStream, writeStream) {
         this._readStream = readStream;
@@ -22,6 +27,12 @@ class RpcServer {
         return decoder.parse();
     }
 
+    /**
+     * 回写结果
+     *
+     * @param {mixed} res - rpc 函数的返回结果
+     * @return
+     */
     write(res) {
         let encoder = new ResEncoder(this._writeStream);
         return encoder.write(res);

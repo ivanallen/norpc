@@ -1,6 +1,6 @@
 /**
  * @file 文件介绍
- * @author liufeng@baidu.com
+ * @author liufeng27@baidu.com
  */
 /* eslint-disable fecs-camelcase */
 /*jshint node:true*/
@@ -12,6 +12,11 @@ const ReqEncoder = require('./req_encoder');
 const ResDecoder = require('./res_decoder');
 const http = require('http');
 
+/**
+ * rpc 客户端
+ *
+ * @class
+ */
 class RpcClient {
     constructor(options) {
         this._options = options;

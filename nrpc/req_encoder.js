@@ -1,17 +1,30 @@
 /**
  * @file 文件介绍
- * @author liufeng@baidu.com
+ * @author liufeng27@baidu.com
  */
 /* eslint-disable fecs-camelcase */
 /*jshint node:true*/
 /*jshint esversion:6*/
 const Encoder = require('./encoder');
+
+/**
+ * 给客户端使用的编码器
+ *
+ * @class
+ */
 class ReqEncoder extends Encoder {
     constructor(writeStream) {
         super(writeStream);
         this._writeStream = writeStream;
     }
 
+    /**
+     * 此方法用于将客户端函数名和参数表序列化传输到对端
+     * 此函数是异步的。
+     *
+     * @param {string} method - 方法名
+     * @param {varlist} argv - 变长参数
+     */
     write(method, ...argv) {
         let jsonBody = {
             method: method,

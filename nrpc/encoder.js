@@ -1,6 +1,6 @@
 /**
  * @file 文件介绍
- * @author liufeng@baidu.com
+ * @author liufeng27@baidu.com
  */
 /* eslint-disable fecs-camelcase */
 /*jshint node:true*/
@@ -11,11 +11,23 @@ const stream = require('stream');
 const MAGIC = 0xccbb0123;
 const HEAD_LENGTH = 48;
 
+/**
+ * 编码器基类，用户需要实现 write 函数
+ *
+ * @class
+ */
 class Encoder {
     constructor(writeStream) {
         this._writeStream = writeStream;
     }
 
+    /**
+     * 将数据序列化，并标识数据类型
+     *
+     * @param {mixed} data - 比如函数参数，返回值
+     * @return {array} - [type, res]
+     *      除了 stream 外，其它数据都序列化为 buffer
+     */
     _getTypeAndData(data) {
         let type = 'raw';
         let res = null;
@@ -49,6 +61,12 @@ class Encoder {
         return [type, res];
     }
 
+    /**
+     * 创建 header
+     *
+     * @param {integer} jsonBodyLen - json 数据长度
+     * @return {Buffer} - 协议头
+     */
     _createHeader(jsonBodyLen) {
         let header = new Buffer(HEAD_LENGTH);
         header.writeUInt32LE(MAGIC, 0);
