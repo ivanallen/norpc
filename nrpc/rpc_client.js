@@ -6,7 +6,6 @@
 /*jshint node:true*/
 /*jshint esversion:6*/
 
-const _ = require('underscore');
 const stream = require('stream');
 const ReqEncoder = require('./req_encoder');
 const ResDecoder = require('./res_decoder');

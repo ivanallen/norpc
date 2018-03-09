@@ -6,7 +6,6 @@
 /*jshint node:true*/
 /*jshint esversion:6*/
 
-const _ = require('underscore');
 const stream = require('stream');
 const MAGIC = 0xccbb0123;
 const HEAD_LENGTH = 48;
@@ -30,21 +29,21 @@ class Encoder {
      */
     _getTypeAndData(data) {
         let type = 'raw';
-        let res = null;
+        let res = data;
         if (data instanceof stream.Readable) {
             type = 'stream';
             res = data;
-        } else if (_.isString(data)) {
+        } else if (toString.call(data) === '[object String]') {
             type = 'string';
             res = new Buffer(data);
-        } else if (_.isObject(data)) {
+        } else if (typeof data === 'object' && !!data) {
             type = 'object';
             try {
                 res = new Buffer(JSON.stringify(data));
             } catch (error) {
                 console.error(error.stack);
             }
-        } else if (_.isNumber(data)) {
+        } else if (toString.call(data) === '[object Number]') {
             if (Number.isInteger(data)) {
                 type = 'integer';
                 res = new Buffer(4);
