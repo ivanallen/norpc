@@ -49,6 +49,19 @@ class ResEncoder extends Encoder {
                 this._writeStream.write(header);
                 this._writeStream.end();
             }
+        }).catch(error => {
+            console.error("%s", error.stack);
+            let [type, res] = this._getTypeAndData(error); 
+            let jsonBody = {
+                type: type,
+                length: res.length
+            };
+            let json = JSON.stringify(jsonBody);
+            let header = this._createHeader(json.length);
+            this._writeStream.write(header);
+            this._writeStream.write(json);
+            this._writeStream.write(res);
+            this._writeStream.end();
         });
     }
 }

@@ -8,6 +8,7 @@
 
 const RpcServer = require('./rpc_server');
 const RpcClient = require('./rpc_client');
+const NoRpcError = require('./norpc_error');
 
 module.exports = {
     server,
@@ -31,7 +32,12 @@ function server(readStream, writeStream, funcs) {
             let ret = f(...argv);
             return server.write(ret);
         } catch (error) {
-            console.error(error.stack);
+            if (error instanceof NoRpcError) {
+                console.error('rpc server error: %s', error.stack);
+            } else {
+                console.error('server error: %s', error.stack);
+            }
+            return server.write(error);
         }
     });
 }
@@ -48,5 +54,11 @@ function server(readStream, writeStream, funcs) {
  */
 function request(options, method, ...argv) {
     let client = new RpcClient(options);
-    return client.request(method, ...argv);
+    return client.request(method, ...argv).catch(error => {
+        if (error instanceof NoRpcError) {
+            console.error('%s', error.stack);
+        } else {
+            return error;
+        }
+    });
 }

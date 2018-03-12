@@ -8,6 +8,7 @@
 
 const stream = require('stream');
 const PassThrough = stream.PassThrough;
+const NoRpcError = require('./norpc_error');
 
 const MAGIC = 0xccbb0123;
 const HEAD_LENGTH = 48;
@@ -22,6 +23,15 @@ class Decoder {
     constructor(readStream) {
         this._readStream = readStream;
         this._buffer = new Buffer([]);
+        this._readStream.on('error', error => {
+            console.error(error.stack);
+        });
+        this._readStream.on('abort', () => {
+            console.error('client abort');
+        });
+        this._readStream.on('close', () => {
+            console.error('client close');
+        });
     }
 
     /**
@@ -61,13 +71,13 @@ class Decoder {
         let readPromise = this._createPromise();
         this._readStream.once('end', () => {
             // 提前结束，但是没读取到 n 字节数据。
-            readPromise.reject(new Error('short data'));
+            readPromise.reject(new NoRpcError('short data'));
         });
         this._readStream.once('abort', () => {
-            readPromise.reject(new Error('request abort'));
+            readPromise.reject(new NoRpcError('request abort'));
         });
-        this._readStream.once('error', () => {
-            readPromise.reject(new Error('request error'));
+        this._readStream.once('error', (error) => {
+            readPromise.reject(new NoRpcError('request error'));
         });
         // 异步读 n 字节
         let _readn = (n) => {
@@ -111,7 +121,7 @@ class Decoder {
             header.magic = chunk.readUInt32LE(0);
             if (header.magic !== MAGIC) {
                 console.error('magic:%s', header.magic.toString(16));
-                return new Error('invalid header');
+                return new NoRpcError('invalid header');
             }
             header.version = chunk.readUInt32LE(4);
             header.jsonBodyLen = chunk.readUInt32LE(44);
@@ -145,14 +155,14 @@ class Decoder {
         let readJsonBodyPromise = this._createPromise();
         return this._readn(header.jsonBodyLen).then(chunk => {
             if (!chunk || chunk.length < header.jsonBodyLen) {
-                readJsonBodyPromise.reject(new Error('short json body'));
+                readJsonBodyPromise.reject(new NoRpcError('short json body'));
                 return;
             }
             try {
                 let jsonBody = JSON.parse(chunk);
                 return jsonBody;
             } catch (error) {
-                return new Error('invalid json body');
+                return new NoRpcError('invalid json body');
             }
         });
     }
@@ -165,15 +175,26 @@ class Decoder {
      *      {integer} describe.length - 数据长度
      */
     _getData(describe) {
-        if (describe.type === 'string') {
+        if (describe.type === 'error') {
+            return this._readn(describe.length).then(chunk => {
+                return JSON.parse(chunk);
+            }).then(e => {
+                e.message = e.message;
+                if (e.name === 'NoRpcError') {
+                    let err = new NoRpcError(e.message);
+                    err.stack = e.stack;
+                    return Promise.reject(err);
+                } else {
+                    let err = new Error(e.message);
+                    err.stack = e.stack;
+                    return Promise.reject(err);
+                }
+            });
+        } else if (describe.type === 'string') {
             return this._readn(describe.length).then(chunk => {
                 return chunk.toString();
             });
-        } else if (describe.type === 'integer') {
-            return this._readn(4).then(chunk => {
-                return chunk.readInt32LE();
-            });
-        } else if (describe.type === 'float') {
+        } else if (describe.type === 'number') {
             return this._readn(8).then(chunk => {
                 return chunk.readDoubleLE();
             });
@@ -186,6 +207,15 @@ class Decoder {
                 return chunk;
             });
         } else if (describe.type === 'stream') {
+            this._readStream.once('error', error => {
+                console.error(error.stack);
+            });
+            this._readStream.once('abort', () => {
+                console.error('read stream abort');
+            });
+            this._readStream.once('close', () => {
+                console.log('read stream close');
+            });
             let ss = new PassThrough();
             this._readStream.pipe(ss);
             return Promise.resolve(ss);

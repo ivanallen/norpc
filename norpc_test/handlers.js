@@ -10,6 +10,11 @@ const handlers = module.exports = {
         return text;
     },
 
+    // 无参函数
+    getTime() {
+        return Date.now();
+    },
+
     // 支持流式数据传送
     pushMsg(stream) {
         return new Promise((resolve, reject) => {
@@ -25,5 +30,21 @@ const handlers = module.exports = {
         let ss = new PassThrough();
         stream.pipe(ss);
         return ss;
+    },
+
+    // 传递 json
+    echoJson(body) {
+        return body;
+    },
+
+    // 抛异常
+    badFunc() {
+        throw new Error('test bad function');
+    },
+
+    // 抛异常
+    sytaxErrorFunc() {
+        let a = b;
+        return 'hello';
     }
 };

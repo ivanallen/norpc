@@ -7,7 +7,6 @@
 /*jshint esversion:6*/
 const norpc = require('../norpc/norpc');
 const http = require('http');
-const PassThrough = require('stream').PassThrough;
 
 const options = {
     hostname: 'localhost',
@@ -15,25 +14,19 @@ const options = {
     path: '/'
 };
 
-let a = 78;
-let b = 99.2;
-norpc.request(options, 'add', a, b).then(res => {
-    console.log('%d + %d = %d', a, b, res);
-}).catch(error => {
-    console.error(error.stack);
-});
+let data = {
+    name: 'baidu',
+    age: 18
+};
 
-
-norpc.request(options, 'echo', 'hello world').then(res => {
+norpc.request(options, 'badFunc').then(res => {
     console.log(res);
 }).catch(error => {
     console.error(error.stack);
 });
 
-
-
-norpc.request(options, 'getTime').then(res => {
-    console.log(Date(res));
+norpc.request(options, 'sytaxErrorFunc').then(res => {
+    console.log(res);
 }).catch(error => {
     console.error(error.stack);
 });

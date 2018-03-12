@@ -9,6 +9,7 @@
 const stream = require('stream');
 const MAGIC = 0xccbb0123;
 const HEAD_LENGTH = 48;
+const NoRpcError = require('./norpc_error');
 
 /**
  * 编码器基类，用户需要实现 write 函数
@@ -32,8 +33,11 @@ class Encoder {
         let res = null;
         if (data instanceof Error) {
             type = 'error';
-            res = {
-            };
+            res = JSON.stringify({
+                name: data.name,
+                message: data.message,
+                stack: data.stack
+            });
         } else if (data instanceof stream.Readable) {
             type = 'stream';
             res = data;
@@ -41,22 +45,16 @@ class Encoder {
             type = 'string';
             res = new Buffer(data);
         } else if (typeof data === 'object' && !!data) {
-            type = 'object';
+            type = 'json';
             try {
                 res = new Buffer(JSON.stringify(data));
             } catch (error) {
                 console.error(error.stack);
             }
         } else if (toString.call(data) === '[object Number]') {
-            if (Number.isInteger(data)) {
-                type = 'integer';
-                res = new Buffer(4);
-                res.writeInt32LE(data, 0);
-            } else {
-                type = 'float';
-                res = new Buffer(8);
-                res.writeDoubleLE(data, 0);
-            }
+            type = 'number';
+            res = new Buffer(8);
+            res.writeDoubleLE(data, 0);
         } else if (data instanceof Buffer) {
             type = 'raw';
             res = data;

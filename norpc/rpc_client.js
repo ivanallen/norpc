@@ -6,7 +6,6 @@
 /*jshint node:true*/
 /*jshint esversion:6*/
 
-const stream = require('stream');
 const ReqEncoder = require('./req_encoder');
 const ResDecoder = require('./res_decoder');
 const http = require('http');
@@ -27,6 +26,12 @@ class RpcClient {
             let req = http.request(this._options, res => {
                 let decoder = new ResDecoder(res);    
                 resolve(decoder.parse());
+            });
+            req.on('abort', error => {
+                console.error(error);
+            });
+            req.on('error', error => {
+                console.error(error.stack);
             });
             let encoder = new ReqEncoder(req);
             encoder.write(method, ...argv);
