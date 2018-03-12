@@ -86,7 +86,7 @@ class Decoder {
                 return false;
             }
             if (chunk.length < n) {
-                readPromise.reject(new Error('short read'));
+                readPromise.reject(new NoRpcError('short read'));
                 return false;
             }
             readPromise.resolve(chunk);
