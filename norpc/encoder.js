@@ -41,6 +41,9 @@ class Encoder {
         } else if (data instanceof stream.Readable) {
             type = 'stream';
             res = data;
+        } else if (data instanceof Buffer) {
+            type = 'raw';
+            res = data;
         } else if (toString.call(data) === '[object String]') {
             type = 'string';
             res = new Buffer(data);
@@ -55,9 +58,6 @@ class Encoder {
             type = 'number';
             res = new Buffer(8);
             res.writeDoubleLE(data, 0);
-        } else if (data instanceof Buffer) {
-            type = 'raw';
-            res = data;
         } else {
             type = 'raw';
             res = new Buffer(data.toString()); // 默认

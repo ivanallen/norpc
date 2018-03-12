@@ -43,6 +43,11 @@ const handlers = module.exports = {
         return body;
     },
 
+    // 传递 2 进制
+    echoBuffer(buf) {
+        return buf;
+    },
+
     // 抛异常
     badFunc() {
         throw new Error('test bad function');

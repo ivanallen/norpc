@@ -191,6 +191,10 @@ class Decoder {
                     return Promise.reject(err);
                 }
             });
+        } else if (describe.type === 'raw') {
+            return this._readn(describe.length).then(chunk => {
+                return chunk;
+            });
         } else if (describe.type === 'string') {
             return this._readn(describe.length).then(chunk => {
                 return chunk.toString();
@@ -202,10 +206,6 @@ class Decoder {
         } else if (describe.type === 'json') {
             return this._readn(describe.length).then(chunk => {
                 return JSON.parse(chunk);
-            });
-        } else if (describe.type === 'raw') {
-            return this._readn(describe.length).then(chunk => {
-                return chunk;
             });
         } else if (describe.type === 'stream') {
             this._readStream.once('error', error => {

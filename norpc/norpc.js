@@ -58,8 +58,7 @@ function request(options, method, ...argv) {
     return client.request(method, ...argv).catch(error => {
         if (error instanceof NoRpcError) {
             console.error('%s', error.stack);
-        } else {
-            return error;
         }
+        return error;
     });
 }
