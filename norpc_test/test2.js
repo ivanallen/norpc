@@ -5,7 +5,7 @@
 /* eslint-disable fecs-camelcase */
 /*jshint node:true*/
 /*jshint esversion:6*/
-const nrpc = require('../nrpc/nrpc');
+const norpc = require('../norpc/norpc');
 const http = require('http');
 const PassThrough = require('stream').PassThrough;
 
@@ -16,7 +16,7 @@ const options = {
 };
 
 let ss = new PassThrough();
-nrpc.request(options, 'pushMsg', ss).then(res => {
+norpc.request(options, 'pushMsg', ss).then(res => {
     // 没有返回值
     console.log(res);
 }).catch(error => {

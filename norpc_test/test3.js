@@ -5,7 +5,7 @@
 /* eslint-disable fecs-camelcase */
 /*jshint node:true*/
 /*jshint esversion:6*/
-const nrpc = require('../nrpc/nrpc');
+const norpc = require('../norpc/norpc');
 const http = require('http');
 const PassThrough = require('stream').PassThrough;
 
@@ -15,20 +15,19 @@ const options = {
     path: '/'
 };
 
-let a = 78;
-let b = 99.2;
-nrpc.request(options, 'add', a, b).then(res => {
-    console.log('%d + %d = %d', a, b, res);
+let ss = new PassThrough();
+norpc.request(options, 'echoStream', ss).then(res => {
+    res.on('data', chunk => {
+        console.log(chunk.toString());
+    });
 }).catch(error => {
     console.error(error.stack);
 });
 
 
-nrpc.request(options, 'echo', 'hello world').then(res => {
-    console.log(res);
-}).catch(error => {
-    console.error(error.stack);
-});
+ss.write('今天星期几?');
 
-
-
+setTimeout(() => {
+    ss.write('今天星期六!');
+    ss.end();
+}, 3000);

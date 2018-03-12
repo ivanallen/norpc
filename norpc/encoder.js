@@ -30,7 +30,11 @@ class Encoder {
     _getTypeAndData(data) {
         let type = 'raw';
         let res = null;
-        if (data instanceof stream.Readable) {
+        if (data instanceof Error) {
+            type = 'error';
+            res = {
+            };
+        } else if (data instanceof stream.Readable) {
             type = 'stream';
             res = data;
         } else if (toString.call(data) === '[object String]') {

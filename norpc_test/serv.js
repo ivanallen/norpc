@@ -1,10 +1,10 @@
 /* jshint esversion:6 */
 const http = require('http');
-const nrpc = require('../nrpc/nrpc');
+const norpc = require('../norpc/norpc');
 const handlers = require('./handlers');
 
 const server = http.createServer((req, res) => {
-    nrpc.server(req, res, handlers).catch(error => {
+    norpc.server(req, res, handlers).catch(error => {
         console.error(error.stack);
     });
 });
