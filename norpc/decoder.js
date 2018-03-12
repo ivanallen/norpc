@@ -10,7 +10,7 @@ const stream = require('stream');
 const PassThrough = stream.PassThrough;
 const NoRpcError = require('./norpc_error');
 
-const MAGIC = 0xccbb0123;
+const MAGIC = 0x6370726e;
 const HEAD_LENGTH = 48;
 
 /**

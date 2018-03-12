@@ -7,7 +7,7 @@
 /* jshint esversion:6 */
 
 const stream = require('stream');
-const MAGIC = 0xccbb0123;
+const MAGIC = 0x6370726e;
 const HEAD_LENGTH = 48;
 const NoRpcError = require('./norpc_error');
 
