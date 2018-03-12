@@ -3,8 +3,8 @@
  * @author liufeng27@baidu.com
  */
 /* eslint-disable fecs-camelcase */
-/*jshint node:true*/
-/*jshint esversion:6*/
+/* jshint node:true */
+/* jshint esversion:6 */
 
 const ReqEncoder = require('./req_encoder');
 const ResDecoder = require('./res_decoder');
@@ -24,7 +24,7 @@ class RpcClient {
     request(method, ...argv) {
         return new Promise((resolve, reject) => {
             let req = http.request(this._options, res => {
-                let decoder = new ResDecoder(res);    
+                let decoder = new ResDecoder(res);
                 resolve(decoder.parse());
             });
             req.on('abort', error => {

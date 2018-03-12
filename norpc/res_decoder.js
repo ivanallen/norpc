@@ -3,8 +3,8 @@
  * @author liufeng27@baidu.com
  */
 /* eslint-disable fecs-camelcase */
-/*jshint node:true*/
-/*jshint esversion:6*/
+/* jshint node:true */
+/* jshint esversion:6 */
 
 const Decoder = require('./decoder');
 
@@ -24,6 +24,7 @@ class ResDecoder extends Decoder {
      * @param {Object} jsonBody
      *      {string} jsonBody.type - 数据类型
      *      {integer} jsonBody.length - 数据长度
+     * @return {mixed} 返回解析出来的数据
      */
     _parse(jsonBody) {
         let describe = jsonBody;

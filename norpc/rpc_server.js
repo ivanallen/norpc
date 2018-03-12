@@ -3,8 +3,8 @@
  * @author liufeng27@baidu.com
  */
 /* eslint-disable fecs-camelcase */
-/*jshint node:true*/
-/*jshint esversion:6*/
+/* jshint node:true */
+/* jshint esversion:6 */
 
 const stream = require('stream');
 const ReqDecoder = require('./req_decoder');
@@ -30,7 +30,7 @@ class RpcServer {
      * 回写结果
      *
      * @param {mixed} res - rpc 函数的返回结果
-     * @return
+     * @return {Promise}
      */
     write(res) {
         let encoder = new ResEncoder(this._writeStream);

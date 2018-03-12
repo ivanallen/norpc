@@ -3,8 +3,8 @@
  * @author liufeng27@baidu.com
  */
 /* eslint-disable fecs-camelcase */
-/*jshint node:true*/
-/*jshint esversion:6*/
+/* jshint node:true */
+/* jshint esversion:6 */
 
 const stream = require('stream');
 const MAGIC = 0xccbb0123;
@@ -25,7 +25,7 @@ class Encoder {
      * 将数据序列化，并标识数据类型
      *
      * @param {mixed} data - 比如函数参数，返回值
-     * @return {array} - [type, res]
+     * @return {Array} - [type, res]
      *      除了 stream 外，其它数据都序列化为 buffer
      */
     _getTypeAndData(data) {

@@ -1,4 +1,11 @@
+/**
+ * @file 文件介绍
+ * @author liufeng27@baidu.com
+ */
+/* eslint-disable fecs-camelcase */
+/* jshint node:true */
 /* jshint esversion:6 */
+
 const http = require('http');
 const norpc = require('../norpc/norpc');
 const handlers = require('./handlers');

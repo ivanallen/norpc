@@ -3,8 +3,8 @@
  * @author liufeng27@baidu.com
  */
 /* eslint-disable fecs-camelcase */
-/*jshint node:true*/
-/*jshint esversion:6*/
+/* jshint node:true */
+/* jshint esversion:6 */
 const Encoder = require('./encoder');
 
 /**
@@ -23,12 +23,12 @@ class ReqEncoder extends Encoder {
      * 此函数是异步的。
      *
      * @param {string} method - 方法名
-     * @param {varlist} argv - 变长参数
+     * @param {...mixed} argv - 变长参数
      */
     write(method, ...argv) {
         let jsonBody = {
             method: method,
-            describes:[]
+            describes: []
         };
         let typeAndData = [];
         for (let arg of argv) {

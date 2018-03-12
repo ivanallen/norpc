@@ -3,8 +3,8 @@
  * @author liufeng27@baidu.com
  */
 /* eslint-disable fecs-camelcase */
-/*jshint node:true*/
-/*jshint esversion:6*/
+/* jshint node:true */
+/* jshint esversion:6 */
 const Decoder = require('./decoder');
 
 /**
@@ -20,15 +20,15 @@ class ReqDecoder extends Decoder {
     /**
      * 参数解析
      *
-     * @param {Object} jsonBody
-     * @return {array} - [method, argv]
+     * @param {Object} jsonBody -
+     * @return {Array} - [method, argv]
      *      第一个元素是方法名，第二个元素是数组，参数表。
      */
     _parse(jsonBody) {
         let describes = jsonBody.describes;
         let method = jsonBody.method;
         let argv = [];
-        let run = (describe) => {
+        let run = describe => {
             return this._getData(describe).then(data => {
                 argv.push(data);
             });

@@ -3,8 +3,8 @@
  * @author liufeng27@baidu.com
  */
 /* eslint-disable fecs-camelcase */
-/*jshint node:true*/
-/*jshint esversion:6*/
+/* jshint node:true */
+/* jshint esversion:6 */
 
 const stream = require('stream');
 const PassThrough = stream.PassThrough;
@@ -76,11 +76,11 @@ class Decoder {
         this._readStream.once('abort', () => {
             readPromise.reject(new NoRpcError('request abort'));
         });
-        this._readStream.once('error', (error) => {
+        this._readStream.once('error', error => {
             readPromise.reject(new NoRpcError('request error'));
         });
         // 异步读 n 字节
-        let _readn = (n) => {
+        let _readn = n => {
             let chunk = this._readStream.read(n);
             if (chunk === null) {
                 return false;
@@ -113,7 +113,7 @@ class Decoder {
     /**
      * 读取 48 字节协议头
      *
-     * @return {Promise} - Object 
+     * @return {Promise} - Object
      */
     _getHeader() {
         return this._readn(HEAD_LENGTH).then(chunk => {
@@ -169,10 +169,11 @@ class Decoder {
 
     /**
      * 根据数据描述信息读取数据
-     *  
+     *
      * @param {Object} describe
      *      {string} describe.type - 数据类型
      *      {integer} describe.length - 数据长度
+     * @return {mixed} - 返回解析后的数据
      */
     _getData(describe) {
         if (describe.type === 'error') {

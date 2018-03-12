@@ -3,8 +3,8 @@
  * @author liufeng27@baidu.com
  */
 /* eslint-disable fecs-camelcase */
-/*jshint node:true*/
-/*jshint esversion:6*/
+/* jshint node:true */
+/* jshint esversion:6 */
 const Encoder = require('./encoder');
 
 /**
@@ -22,6 +22,7 @@ class ResEncoder extends Encoder {
      * 用于将结果传输回去
      *
      * @param {mixed} result - rpc 函数返回的结果
+     * @return {Promise}
      */
     write(result) {
         if (!(result instanceof Promise)) {
@@ -50,8 +51,8 @@ class ResEncoder extends Encoder {
                 this._writeStream.end();
             }
         }).catch(error => {
-            console.error("%s", error.stack);
-            let [type, res] = this._getTypeAndData(error); 
+            console.error('%s', error.stack);
+            let [type, res] = this._getTypeAndData(error);
             let jsonBody = {
                 type: type,
                 length: res.length
