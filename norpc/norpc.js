@@ -11,7 +11,7 @@ const RpcClient = require('./rpc_client');
 const NoRpcError = require('./norpc_error');
 
 module.exports = {
-    server,
+    serve,
     request
 };
 
@@ -24,7 +24,7 @@ module.exports = {
  *
  * @return {Promise}
  */
-function server(readStream, writeStream, funcs) {
+function serve(readStream, writeStream, funcs) {
     let server = new RpcServer(readStream, writeStream);
     return server.parse().then(([method, argv]) => {
         try {

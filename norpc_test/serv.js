@@ -4,7 +4,7 @@ const norpc = require('../norpc/norpc');
 const handlers = require('./handlers');
 
 const server = http.createServer((req, res) => {
-    norpc.server(req, res, handlers).catch(error => {
+    norpc.serve(req, res, handlers).catch(error => {
         console.error(error.stack);
     });
 });
