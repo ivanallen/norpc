@@ -1,6 +1,6 @@
 /**
  * @file 文件介绍
- * @author liufeng@baidu.com
+ * @author liufeng
  */
 /* eslint-disable fecs-camelcase */
 /* jshint node:true */
